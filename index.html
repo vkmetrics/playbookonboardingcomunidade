@@ -215,6 +215,7 @@
     display:grid;
     grid-template-rows:0fr;
     transition:grid-template-rows .25s ease;
+    overflow:hidden; /* Garante que o conteúdo não vaze enquanto estiver fechado */
   }
   .card[data-open="true"] .card-body{grid-template-rows:1fr;}
   .card-body-inner{
@@ -247,7 +248,7 @@
     padding-left:0;
   }
   .card-body ul.checklist li::before{
-    display:none; /* Remove o ponto padrão */
+    display:none;
   }
   .checklist-item{
     display:flex;
@@ -335,7 +336,7 @@
     <div id="steps"></div>
   </div>
 
- </div>
+</div>
 
 <script>
 const ROLES = [
@@ -473,7 +474,6 @@ function renderSteps(){
 
     const listClass = s.isChecklist ? 'checklist' : '';
     
-    // Gera os itens como checkboxes clicáveis se for checklist, ou lista normal se não for
     const listHtml = s.items.map((i, itemIdx) => {
       if(s.isChecklist) {
         return `
