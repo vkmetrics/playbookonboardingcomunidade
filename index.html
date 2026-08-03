@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playbook de Onboarding — Comunidade VK Metrics Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F8F9FA;
+    --bg-2: #EDF0F5;
+    --panel: #FFFFFF;
+    --panel-hover: #F3F4F8;
+    --line: #E2E8F0;
+    --ink: #111827;
+    --ink-muted: #4B5563;
+    --ink-faint: #6B7280;
+
+    --c-tecnico: #7C3AED; /* Roxo principal */
+    --c-cs: #9333EA;      /* Roxo vibrante */
+    --c-gerente: #111827; /* Preto */
+    --c-socio: #4C1D95;   /* Roxo escuro */
+
+    --radius: 14px;
+    --font-body: 'Lato', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 300px);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:inherit;}
+
+  .wrap{max-width:920px; margin:0 auto; padding: 56px 24px 120px;}
+
+  /* ---------- HEADER ---------- */
+  header{margin-bottom:52px;}
+  .eyebrow{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--c-tecnico);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px; height:2px; background:var(--c-tecnico); display:inline-block;
+  }
+  h1{
+    font-weight:900;
+    font-size:clamp(30px, 4.5vw, 44px);
+    line-height:1.15;
+    margin:0;
+    letter-spacing:-.02em;
+    color: var(--ink);
+  }
+
+  /* ---------- ELENCO / LEGEND ---------- */
+  .elenco{
+    margin-top:36px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+  @media(max-width:720px){ .elenco{grid-template-columns:repeat(2,1fr);} }
+
+  .role-chip{
+    all:unset;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:16px;
+    border-radius:12px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition:transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  .role-chip:hover{
+    background:var(--panel-hover);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .role-chip:focus-visible{outline:2px solid var(--c-tecnico); outline-offset:2px;}
+  .role-chip[aria-pressed="true"]{
+    border-color: var(--dot);
+    background:var(--panel);
+    transform:translateY(-2px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--dot) 20%, transparent);
+  }
+  .role-dot{width:10px; height:10px; border-radius:50%; background:var(--dot);}
+  .role-name{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.01em;
+    color:var(--ink);
+  }
+  .role-when{
+    font-size:12px;
+    color:var(--ink-faint);
+    line-height:1.4;
+    font-weight: 300;
+  }
+
+  .clear-filter{
+    margin-top:16px;
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink-faint);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    text-decoration:underline;
+    text-underline-offset:3px;
+    visibility:hidden;
+  }
+  .clear-filter.show{visibility:visible;}
+  .clear-filter:hover{color:var(--ink);}
+
+  /* ---------- TRACK / TIMELINE ---------- */
+  .track{position:relative; margin-top:56px;}
+  .track-line{
+    position:absolute;
+    left:23px;
+    top:10px;
+    bottom:10px;
+    width:2px;
+    background:var(--line);
+    z-index:0;
+  }
+
+  .step{
+    position:relative;
+    padding-left:64px;
+    margin-bottom:16px;
+    transition:opacity .25s ease, filter .25s ease;
+  }
+  .step.dim{opacity:.25; filter:grayscale(80%);}
+
+  .node{
+    position:absolute;
+    left:0; top:2px;
+    width:48px; height:48px;
+    border-radius:50%;
+    background:var(--panel);
+    border:2px solid var(--dot);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700;
+    font-size:15px;
+    color:var(--dot);
+    z-index:1;
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    overflow:hidden;
+  }
+
+  .card-head{
+    all:unset;
+    box-sizing:border-box;
+    display:flex;
+    width:100%;
+    align-items:center;
+    gap:14px;
+    padding:18px 20px;
+    cursor:pointer;
+  }
+  .card-head:focus-visible{outline:2px solid var(--c-tecnico); outline-offset:-2px;}
+
+  .card-title{
+    font-weight:700;
+    font-size:17px;
+    flex:1;
+    color:var(--ink);
+  }
+  .tag{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    padding:6px 10px;
+    border-radius:6px;
+    background:color-mix(in srgb, var(--dot) 10%, transparent);
+    color:var(--dot);
+    white-space:nowrap;
+  }
+  .chevron{
+    width:18px; height:18px;
+    flex-shrink:0;
+    color:var(--ink-faint);
+    transition:transform .2s ease;
+  }
+  .card[data-open="true"] .chevron{transform:rotate(180deg);}
+
+  .card-body{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows .25s ease;
+  }
+  .card[data-open="true"] .card-body{grid-template-rows:1fr;}
+  .card-body-inner{
+    overflow:hidden;
+    padding:0 20px 20px 20px;
+  }
+  .card-body ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+  .card-body li{
+    position:relative;
+    padding:10px 0 10px 20px;
+    color:var(--ink-muted);
+    font-size:15px;
+    border-top:1px solid var(--line);
+  }
+  .card-body li:first-child{border-top:none; padding-top:4px;}
+  .card-body li::before{
+    content:"";
+    position:absolute; left:2px; top:18px;
+    width:6px; height:6px; border-radius:50%;
+    background:var(--dot);
+  }
+  .card-body li strong{color:var(--ink); font-weight:700;}
+
+  /* ---------- CHECKLIST STYLE ---------- */
+  .card-body ul.checklist li{
+    padding-left:28px;
+  }
+  .card-body ul.checklist li::before{
+    content:"";
+    position:absolute;
+    left:2px; top:14px;
+    width:15px; height:15px;
+    border-radius:4px;
+    border:2px solid var(--dot);
+    background:transparent;
+  }
+
+  .note{
+    font-size:14px;
+    color:var(--ink-muted);
+    background: #F3F0FF;
+    border-left:4px solid var(--c-tecnico);
+    padding:12px 16px;
+    border-radius:0 8px 8px 0;
+    margin-top:16px;
+  }
+  .note strong{color:var(--ink); font-weight:700;}
+
+  /* ---------- FOOTER ---------- */
+  .footer-note{
+    margin-top:64px;
+    padding:24px;
+    border-radius:var(--radius);
+    background: var(--panel);
+    border:1px dashed #CBD5E1;
+    color:var(--ink-muted);
+    font-size:14.5px;
+  }
+  .footer-note strong{color:var(--ink); font-weight:700;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Onboarding · Comunidade VK Metrics Pro</div>
+    <h1>Quem faz o quê, e em que ordem</h1>
+
+    <div class="elenco" id="elenco"></div>
+    <button class="clear-filter" id="clearFilter">mostrar tudo de novo</button>
+  </header>
+
+  <div class="track">
+    <div class="track-line"></div>
+    <div id="steps"></div>
+  </div>
+
+  <div class="footer-note">
+    <strong>Isso é a v1.</strong> A ideia é todo mundo — técnico, CS, gerente de contas, sócio — conseguir olhar aqui e saber exatamente onde entra e o que passa pra frente. Mais detalhes (scripts prontos, links dos formulários, prints do CRM) entram nas próximas rodadas.
+  </div>
+
+</div>
+
+<script>
+const ROLES = [
+  { id:'tecnico', name:'Time Técnico', color:'var(--c-tecnico)', when:'1º contato, onboarding da ferramenta' },
+  { id:'cs', name:'CS', color:'var(--c-cs)', when:'Logo após o onboarding técnico' },
+  { id:'gerente', name:'Gerente de Contas', color:'var(--c-gerente)', when:'A partir da Call de Onboarding' },
+  { id:'socio', name:'Sócios', color:'var(--c-socio)', when:'1ª Consultoria Individual em diante' },
+];
+
+const STEPS = [
+  {
+    n:'0', role:'tecnico', title:'Call de onboarding da ferramenta + aviso técnico',
+    items:[
+      'O time técnico apresenta rapidamente os entregáveis da Comunidade ainda na call de onboarding da ferramenta, e avisa que a CS de Educação vai entrar em contato com mais detalhes.',
+      '<strong>Frase-chave da call:</strong> a Comunidade não é um "bônus" — é uma extensão da ferramenta.',
+      'Ao final, o técnico repassa pra CS de Educação: nome do projeto, responsável pelo projeto e link do grupo. A CS já aproveita esse momento pra marcar o Gerente de Contas no grupo do cliente.'
+    ]
+  },
+  {
+    n:'1', role:'cs', title:'Boas-vindas + formulário cadastral',
+    items:[
+      'CS dá as boas-vindas e abre o onboarding pedindo o preenchimento do formulário com os dados pra gerar o contrato.',
+      '<strong>Importante:</strong> é um formulário cadastral, não um diagnóstico de negócio — ele não gera nenhum insumo qualitativo pro Gerente de Contas usar depois.'
+    ]
+  },
+  {
+    n:'2', role:'cs', title:'Produção do contrato',
+    items:[
+      'Com o formulário preenchido, CS avisa o cliente que o contrato está sendo produzido.',
+      'Junto, já envia o link da Central da Comunidade, pra ele começar a se situar.'
+    ]
+  },
+  {
+    n:'3', role:'cs', title:'Envio do contrato e assinatura',
+    items:[
+      'CS envia o contrato pra assinatura na Assina AI e avisa o cliente.',
+      'Reforça que os acessos só são liberados depois da assinatura.'
+    ]
+  },
+  {
+    n:'4', role:'cs', title:'Liberação do WhatsApp e da Área de Membros',
+    items:[
+      'Assinatura feita: CS libera a área de membros usando o e-mail de compra da ferramenta.',
+      'Envia mais dois links pro cliente: grupo de WhatsApp e Área de Membros.'
+    ]
+  },
+  {
+    n:'5', role:'cs', title:'Agendamento da call de onboarding',
+    items:[
+      'Com os acessos liberados, CS marca a call de onboarding com o Gerente de Contas.'
+    ]
+  },
+  {
+    n:'6', role:'gerente', title:'Call de onboarding com o Gerente de Contas',
+    isChecklist: true,
+    items:[
+      'Boas-vindas e apresentação pessoal.',
+      'Mapa visual dos entregáveis: grupo de WhatsApp, Hotmart, plantões, workshops, consultorias, link da central.',
+      'Explica o que são e como aproveitar as 4 consultorias com os sócios — o objetivo aqui é gerar expectativa alta.',
+      'Faz um diagnóstico ao vivo pra levar pro sócio: nicho/mercado, principal dor relatada, objetivo pros próximos meses, e qualquer observação relevante.',
+      'Marca a 1ª call de consultoria com um dos sócios e registra tudo no CRM.'
+    ],
+    note: '<strong>Observação (Acompanhamento Proativo):</strong> A partir daqui o Gerente de Contas não espera o cliente pedir ajuda: monitora o uso da conta, fica de olho em riscos (baixo engajamento, dúvidas recorrentes, sinais de churn) e em oportunidades.'
+  },
+  {
+    n:'7', role:'socio', title:'1ª call de consultoria individual',
+    items:[
+      'O sócio conduz a primeira consultoria com o cliente.',
+      'Antes da call, o sócio revisa o que o Gerente de Contas registrou no CRM — o terreno já chega preparado.'
+    ]
+  },
+  {
+    n:'8', role:'cs', title:'Pós-call de consultoria',
+    items:[
+      'CS envia ao cliente o link da gravação e os principais pontos tratados na call.',
+      'Resolve qualquer pendência que tenha ficado e registra tudo no CRM.'
+    ]
+  },
+];
+
+const elencoEl = document.getElementById('elenco');
+const stepsEl = document.getElementById('steps');
+const clearBtn = document.getElementById('clearFilter');
+let activeRole = null;
+
+function roleColor(id){ return ROLES.find(r=>r.id===id).color; }
+
+function renderElenco(){
+  elencoEl.innerHTML = '';
+  ROLES.forEach(r=>{
+    const btn = document.createElement('button');
+    btn.className = 'role-chip';
+    btn.style.setProperty('--dot', r.color);
+    btn.setAttribute('aria-pressed', activeRole===r.id ? 'true' : 'false');
+    btn.innerHTML = `
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span class="role-dot"></span>
+        <span class="role-name">${r.name}</span>
+      </span>
+      <span class="role-when">${r.when}</span>
+    `;
+    btn.addEventListener('click', ()=>{
+      activeRole = activeRole === r.id ? null : r.id;
+      renderElenco();
+      applyFilter();
+    });
+    elencoEl.appendChild(btn);
+  });
+  clearBtn.classList.toggle('show', !!activeRole);
+}
+
+function applyFilter(){
+  document.querySelectorAll('.step').forEach(el=>{
+    const match = !activeRole || el.dataset.role === activeRole;
+    el.classList.toggle('dim', !match);
+  });
+}
+
+clearBtn.addEventListener('click', ()=>{
+  activeRole = null;
+  renderElenco();
+  applyFilter();
+});
+
+function renderSteps(){
+  stepsEl.innerHTML = '';
+  STEPS.forEach((s, idx)=>{
+    const color = roleColor(s.role);
+    const roleName = ROLES.find(r=>r.id===s.role).name;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'step';
+    wrap.dataset.role = s.role;
+    wrap.style.setProperty('--dot', color);
+
+    const listClass = s.isChecklist ? 'checklist' : '';
+    const listHtml = s.items.map(i=>`<li>${i}</li>`).join('');
+    const noteHtml = s.note ? `<div class="note">${s.note}</div>` : '';
+
+    wrap.innerHTML = `
+      <div class="node" style="--dot:${color}">${s.n}</div>
+      <div class="card" data-open="${idx===0 ? 'true' : 'false'}">
+        <button class="card-head" aria-expanded="${idx===0}">
+          <span class="card-title">${s.title}</span>
+          <span class="tag" style="--dot:${color}">${roleName}</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="card-body">
+          <div class="card-body-inner">
+            <ul class="${listClass}">${listHtml}</ul>
+            ${noteHtml}
+          </div>
+        </div>
+      </div>
+    `;
+
+    const card = wrap.querySelector('.card');
+    const head = wrap.querySelector('.card-head');
+    head.addEventListener('click', ()=>{
+      const open = card.dataset.open === 'true';
+      card.dataset.open = open ? 'false' : 'true';
+      head.setAttribute('aria-expanded', String(!open));
+    });
+
+    stepsEl.appendChild(wrap);
+  });
+}
+
+renderElenco();
+renderSteps();
+</script>
+
+</body>
+</html>
