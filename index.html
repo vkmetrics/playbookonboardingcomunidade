@@ -211,7 +211,6 @@
   }
   .card[data-open="true"] .chevron{transform:rotate(180deg);}
 
-  /* Esconde o corpo completamente quando fechado */
   .card-body{
     display:none;
     padding:0 20px 20px 20px;
@@ -301,9 +300,21 @@
   }
   .note strong{color:var(--ink); font-weight:700;}
 
+  /* ---------- SECTION MATERIAIS / EXTRA CHECKLIST ---------- */
+  .materials-section{
+    margin-top:56px;
+  }
+  .materials-section h2{
+    font-size:22px;
+    font-weight:900;
+    margin-bottom:20px;
+    color:var(--ink);
+    letter-spacing:-.01em;
+  }
+
   /* ---------- FOOTER ---------- */
   .footer-note{
-    margin-top:64px;
+    margin-top:48px;
     padding:24px;
     border-radius:var(--radius);
     background: var(--panel);
@@ -332,6 +343,58 @@
   <div class="track">
     <div class="track-line"></div>
     <div id="steps"></div>
+  </div>
+
+  <!-- NOVA SEÇÃO: CHECKLIST DE MATERIAIS DO TIME DE EDUCAÇÃO -->
+  <div class="materials-section">
+    <h2>Materiais & Pendências — Time de Educação</h2>
+    <div class="card" data-open="false" style="--dot: var(--c-cs);">
+      <button class="card-head" aria-expanded="false">
+        <span class="card-title">Checklist de Materiais e Configurações Iniciais</span>
+        <span class="tag" style="--dot: var(--c-cs);">Educação</span>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <div class="card-body">
+        <ul class="checklist">
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="mat-1">
+              <span>Criar grupo com o time técnico de Metrics pra envio do nome do projeto + link do grupo pós call de onboarding.</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="mat-2">
+              <span>Nicole e Diogo: criar link de agenda com horários disponíveis para call de onboarding (e, se possível, os sócios também).</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="mat-3">
+              <span>Criar materiais em português e espanhol — Imagem simples p/ envio rápido no WhatsApp.</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="mat-4">
+              <span>Criar materiais em português e espanhol — Slides para call técnica.</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="mat-5">
+              <span>Criar materiais em português e espanhol — Slides para call de onboarding.</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="mat-6">
+              <span>Criar materiais em português e espanhol — Roteiro para call de onboarding.</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -513,6 +576,16 @@ function renderSteps(){
     stepsEl.appendChild(wrap);
   });
 }
+
+// Event listener para o card estático de materiais
+document.querySelectorAll('.materials-section .card').forEach(card => {
+  const head = card.querySelector('.card-head');
+  head.addEventListener('click', () => {
+    const open = card.dataset.open === 'true';
+    card.dataset.open = open ? 'false' : 'true';
+    head.setAttribute('aria-expanded', String(!open));
+  });
+});
 
 renderElenco();
 renderSteps();
