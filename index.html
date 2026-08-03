@@ -18,10 +18,10 @@
     --ink-muted: #4B5563;
     --ink-faint: #6B7280;
 
-    --c-tecnico: #7C3AED; /* Roxo principal */
-    --c-cs: #9333EA;      /* Roxo vibrante */
-    --c-gerente: #111827; /* Preto */
-    --c-socio: #4C1D95;   /* Roxo escuro */
+    --c-tecnico: #7C3AED;
+    --c-cs: #9333EA;
+    --c-gerente: #111827;
+    --c-socio: #4C1D95;
 
     --radius: 14px;
     --font-body: 'Lato', sans-serif;
@@ -242,18 +242,53 @@
   }
   .card-body li strong{color:var(--ink); font-weight:700;}
 
-  /* ---------- CHECKLIST STYLE ---------- */
+  /* ---------- INTERACTIVE CHECKLIST STYLE ---------- */
   .card-body ul.checklist li{
-    padding-left:28px;
+    padding-left:0;
   }
   .card-body ul.checklist li::before{
-    content:"";
-    position:absolute;
-    left:2px; top:14px;
-    width:15px; height:15px;
-    border-radius:4px;
+    display:none; /* Remove o ponto padrão */
+  }
+  .checklist-item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .checklist-item input[type="checkbox"]{
+    appearance:none;
+    -webkit-appearance:none;
+    width:18px;
+    height:18px;
     border:2px solid var(--dot);
-    background:transparent;
+    border-radius:4px;
+    margin-top:2px;
+    cursor:pointer;
+    flex-shrink:0;
+    display:grid;
+    place-content:center;
+    transition:background-color .15s ease, border-color .15s ease;
+  }
+  .checklist-item input[type="checkbox"]::before{
+    content:"";
+    width:10px;
+    height:10px;
+    transform:scale(0);
+    transition:120ms transform ease-in-out;
+    box-shadow:inset 1em 1em var(--panel);
+    transform-origin:bottom left;
+    clip-path:polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+  .checklist-item input[type="checkbox"]:checked{
+    background-color:var(--dot);
+  }
+  .checklist-item input[type="checkbox"]:checked::before{
+    transform:scale(1);
+  }
+  .checklist-item input[type="checkbox"]:checked + span{
+    text-decoration:line-through;
+    color:var(--ink-faint);
   }
 
   .note{
@@ -300,11 +335,7 @@
     <div id="steps"></div>
   </div>
 
-  <div class="footer-note">
-    <strong>Isso é a v1.</strong> A ideia é todo mundo — técnico, CS, gerente de contas, sócio — conseguir olhar aqui e saber exatamente onde entra e o que passa pra frente. Mais detalhes (scripts prontos, links dos formulários, prints do CRM) entram nas próximas rodadas.
-  </div>
-
-</div>
+ </div>
 
 <script>
 const ROLES = [
@@ -431,7 +462,7 @@ clearBtn.addEventListener('click', ()=>{
 
 function renderSteps(){
   stepsEl.innerHTML = '';
-  STEPS.forEach((s, idx)=>{
+  STEPS.forEach((s)=>{
     const color = roleColor(s.role);
     const roleName = ROLES.find(r=>r.id===s.role).name;
 
@@ -441,13 +472,28 @@ function renderSteps(){
     wrap.style.setProperty('--dot', color);
 
     const listClass = s.isChecklist ? 'checklist' : '';
-    const listHtml = s.items.map(i=>`<li>${i}</li>`).join('');
+    
+    // Gera os itens como checkboxes clicáveis se for checklist, ou lista normal se não for
+    const listHtml = s.items.map((i, itemIdx) => {
+      if(s.isChecklist) {
+        return `
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="chk-${s.n}-${itemIdx}">
+              <span>${i}</span>
+            </label>
+          </li>
+        `;
+      }
+      return `<li>${i}</li>`;
+    }).join('');
+
     const noteHtml = s.note ? `<div class="note">${s.note}</div>` : '';
 
     wrap.innerHTML = `
       <div class="node" style="--dot:${color}">${s.n}</div>
-      <div class="card" data-open="${idx===0 ? 'true' : 'false'}">
-        <button class="card-head" aria-expanded="${idx===0}">
+      <div class="card" data-open="false">
+        <button class="card-head" aria-expanded="false">
           <span class="card-title">${s.title}</span>
           <span class="tag" style="--dot:${color}">${roleName}</span>
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
