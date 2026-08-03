@@ -211,17 +211,15 @@
   }
   .card[data-open="true"] .chevron{transform:rotate(180deg);}
 
+  /* Esconde o corpo completamente quando fechado */
   .card-body{
-    display:grid;
-    grid-template-rows:0fr;
-    transition:grid-template-rows .25s ease;
-    overflow:hidden; /* Garante que o conteúdo não vaze enquanto estiver fechado */
-  }
-  .card[data-open="true"] .card-body{grid-template-rows:1fr;}
-  .card-body-inner{
-    overflow:hidden;
+    display:none;
     padding:0 20px 20px 20px;
   }
+  .card[data-open="true"] .card-body{
+    display:block;
+  }
+
   .card-body ul{
     margin:0;
     padding:0;
@@ -335,7 +333,6 @@
     <div class="track-line"></div>
     <div id="steps"></div>
   </div>
-
 </div>
 
 <script>
@@ -499,10 +496,8 @@ function renderSteps(){
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         <div class="card-body">
-          <div class="card-body-inner">
-            <ul class="${listClass}">${listHtml}</ul>
-            ${noteHtml}
-          </div>
+          <ul class="${listClass}">${listHtml}</ul>
+          ${noteHtml}
         </div>
       </div>
     `;
