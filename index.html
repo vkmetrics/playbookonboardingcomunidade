@@ -180,7 +180,8 @@
     display:flex;
     width:100%;
     align-items:center;
-    gap:14px;
+    gap:10px;
+    flex-wrap:wrap;
     padding:18px 20px;
     cursor:pointer;
   }
@@ -189,7 +190,8 @@
   .card-title{
     font-weight:700;
     font-size:17px;
-    flex:1;
+    flex:1 1 220px;
+    min-width:180px;
     color:var(--ink);
   }
   .tag{
@@ -290,6 +292,53 @@
     color:var(--ink-faint);
   }
 
+  /* ---------- GRUPOS DENTRO DE UMA ETAPA ---------- */
+  .group + .group{margin-top:22px;}
+  .group-label{
+    font-size:12px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--dot);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:4px 0 6px;
+  }
+  .group-label::before{
+    content:"";
+    width:16px; height:2px; background:var(--dot); display:inline-block;
+  }
+
+  /* ---------- BLOCO CRM ---------- */
+  .crm-block{
+    margin-top:20px;
+    background:#F3F0FF;
+    border:1px solid #E4DDFB;
+    border-radius:10px;
+    padding:16px;
+  }
+  .crm-title{
+    font-size:13px;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:12px;
+  }
+  .crm-fields{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+    gap:10px;
+  }
+  .crm-field{
+    background:var(--panel);
+    border:1px solid #DDD4F7;
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--c-socio);
+  }
+
   .note{
     font-size:14px;
     color:var(--ink-muted);
@@ -365,12 +414,6 @@
           </li>
           <li>
             <label class="checklist-item">
-              <input type="checkbox" id="mat-2">
-              <span>Nicole e Diogo: criar link de agenda com horários disponíveis para call de onboarding. E, se possível, os sócios também.</span>
-            </label>
-          </li>
-          <li>
-            <label class="checklist-item">
               <input type="checkbox" id="mat-3">
               <span>Criar materiais em português e espanhol: Imagem simples p/ envio rápido no WhatsApp.</span>
             </label>
@@ -384,13 +427,13 @@
           <li>
             <label class="checklist-item">
               <input type="checkbox" id="mat-5">
-              <span>Criar materiais em português e espanhol: Slides para call de onboarding.</span>
+              <span>Criar materiais em português e espanhol: Slides da Parte 1 (Gerente de Contas) da call única.</span>
             </label>
           </li>
           <li>
             <label class="checklist-item">
               <input type="checkbox" id="mat-6">
-              <span>Criar roteiro para call de onboarding.</span>
+              <span>Criar roteiro da call única, com a virada clara entre Parte 1 (Gerente) e Parte 2 (Sócio).</span>
             </label>
           </li>
         </ul>
@@ -403,8 +446,8 @@
 const ROLES = [
   { id:'tecnico', name:'Time Técnico', color:'var(--c-tecnico)', when:'1º contato, onboarding da ferramenta' },
   { id:'cs', name:'CS', color:'var(--c-cs)', when:'Logo após o onboarding técnico' },
-  { id:'gerente', name:'Gerente de Contas', color:'var(--c-gerente)', when:'A partir da Call de Onboarding' },
-  { id:'socio', name:'Sócios', color:'var(--c-socio)', when:'1ª Consultoria Individual em diante' },
+  { id:'gerente', name:'Gerente de Contas', color:'var(--c-gerente)', when:'1ª parte da call única, e daí em diante' },
+  { id:'socio', name:'Sócios', color:'var(--c-socio)', when:'2ª parte da mesma call (consultoria)' },
 ];
 
 const STEPS = [
@@ -445,33 +488,48 @@ const STEPS = [
     ]
   },
   {
-    n:'5', role:'cs', title:'Agendamento da call de onboarding',
+    n:'5', role:'cs', title:'Agendamento da call única + coleta de contexto',
     items:[
-      'Com os acessos liberados, CS marca a call de onboarding com o Gerente de Contas.'
+      'Com os acessos liberados, a CS marca a call — <strong>uma só</strong>, com Gerente de Contas e Sócio juntos.',
+      'No agendamento, a CS coleta duas informações obrigatórias: <strong>nicho</strong> do cliente e <strong>o ponto que ele quer tratar</strong> — "Além de contar mais sobre o seu projeto, em qual ponto específico você quer focar o direcionamento do sócio?"',
+      'Esse contexto é registrado no CRM para que o Gerente e o Sócio analisem <strong>antes</strong> da call.'
     ]
   },
   {
-    n:'6', role:'gerente', title:'Call de onboarding com o Gerente de Contas',
+    n:'6', roles:['gerente','socio'], role:'gerente', title:'Call única: onboarding + consultoria estratégica',
     isChecklist: true,
+    groups:[
+      {
+        label:'Parte 1 — Gerente de Contas',
+        items:[
+          'Boas-vindas e apresentação pessoal — o cliente sai da call sabendo quem é o Gerente dele.',
+          'Mapa visual dos entregáveis da Comunidade: grupo de WhatsApp, Hotmart, plantões, workshops, consultorias, link da central.',
+          'Explica o que são e como aproveitar as 4 consultorias com os sócios — o objetivo aqui é gerar expectativa alta.',
+          'Passa a palavra pro sócio já ancorado no contexto coletado no agendamento (nicho + ponto de foco).'
+        ]
+      },
+      {
+        label:'Parte 2 — Sócio',
+        items:[
+          'Antes da call, o sócio revisa o que a CS registrou no CRM.',
+          'O sócio dá sequência com a call estratégica.'
+        ]
+      }
+    ],
+    crm:{
+      title:'Os dois precisam passar por estes pontos — é o que vai pro CRM:',
+      fields:['Objetivo','Desafios','Resultados esperados','Ações acordadas']
+    }
+  },
+  {
+    n:'7', role:'gerente', title:'Pós-call: presença no grupo',
     items:[
-      'Boas-vindas e apresentação pessoal.',
-      'Mapa visual dos entregáveis: grupo de WhatsApp, Hotmart, plantões, workshops, consultorias, link da central.',
-      'Explica o que são e como aproveitar as 4 consultorias com os sócios — o objetivo aqui é gerar expectativa alta.',
-      'Faz um diagnóstico ao vivo pra levar pro sócio: nicho/mercado, principal dor relatada, objetivo pros próximos meses, e qualquer observação relevante.',
-      'Marca a 1ª call de consultoria com um dos sócios e registra tudo no CRM. É importante que as marcações sejam padronizadas (título, configuração, etc.)',
-      'Após a call de onboarding, o Gerente de Contas manda um "oi" no grupo para reforçar sua presença.'
+      'Logo após a call, o Gerente de Contas manda um "oi" no grupo pra reforçar a presença dele ali.'
     ],
     note: '<strong>Observação:</strong> A partir daqui o Gerente de Contas não espera o cliente pedir ajuda: monitora o uso da conta, fica de olho em baixo engajamento, dúvidas recorrentes e em oportunidades.'
   },
   {
-    n:'7', role:'socio', title:'1ª call de consultoria individual',
-    items:[
-      'O sócio conduz a primeira consultoria com o cliente.',
-      'Antes da call, o sócio revisa o que o Gerente de Contas registrou no CRM — o terreno já chega preparado.'
-    ]
-  },
-  {
-    n:'8', role:'cs', title:'Pós-call de consultoria',
+    n:'8', role:'cs', title:'Pós-call: gravação e pendências',
     items:[
       'CS envia ao cliente o link da gravação e os principais pontos tratados na call.',
       'Resolve qualquer pendência que tenha ficado e registra tudo no CRM.'
@@ -512,7 +570,8 @@ function renderElenco(){
 
 function applyFilter(){
   document.querySelectorAll('.step').forEach(el=>{
-    const match = !activeRole || el.dataset.role === activeRole;
+    const roles = (el.dataset.roles || '').split(',');
+    const match = !activeRole || roles.includes(activeRole);
     el.classList.toggle('dim', !match);
   });
 }
@@ -526,22 +585,22 @@ clearBtn.addEventListener('click', ()=>{
 function renderSteps(){
   stepsEl.innerHTML = '';
   STEPS.forEach((s)=>{
-    const color = roleColor(s.role);
-    const roleName = ROLES.find(r=>r.id===s.role).name;
+    const stepRoles = s.roles || [s.role];
+    const color = roleColor(stepRoles[0]);
 
     const wrap = document.createElement('div');
     wrap.className = 'step';
-    wrap.dataset.role = s.role;
+    wrap.dataset.roles = stepRoles.join(',');
     wrap.style.setProperty('--dot', color);
 
     const listClass = s.isChecklist ? 'checklist' : '';
-    
-    const listHtml = s.items.map((i, itemIdx) => {
+
+    const renderItems = (items, prefix) => items.map((i, itemIdx) => {
       if(s.isChecklist) {
         return `
           <li>
             <label class="checklist-item">
-              <input type="checkbox" id="chk-${s.n}-${itemIdx}">
+              <input type="checkbox" id="chk-${prefix}-${itemIdx}">
               <span>${i}</span>
             </label>
           </li>
@@ -550,18 +609,45 @@ function renderSteps(){
       return `<li>${i}</li>`;
     }).join('');
 
+    let bodyHtml = '';
+    if(s.groups){
+      bodyHtml = s.groups.map((g, gi)=>`
+        <div class="group">
+          <div class="group-label" style="--dot:${roleColor(stepRoles[gi] || stepRoles[0])}">${g.label}</div>
+          <ul class="${listClass}">${renderItems(g.items, `${s.n}-${gi}`)}</ul>
+        </div>
+      `).join('');
+    } else {
+      bodyHtml = `<ul class="${listClass}">${renderItems(s.items, s.n)}</ul>`;
+    }
+
+    const crmHtml = s.crm ? `
+      <div class="crm-block">
+        <div class="crm-title">${s.crm.title}</div>
+        <div class="crm-fields">
+          ${s.crm.fields.map(f=>`<div class="crm-field">${f}</div>`).join('')}
+        </div>
+      </div>
+    ` : '';
+
     const noteHtml = s.note ? `<div class="note">${s.note}</div>` : '';
+
+    const tagsHtml = stepRoles.map(rid=>{
+      const r = ROLES.find(x=>x.id===rid);
+      return `<span class="tag" style="--dot:${r.color}">${r.name}</span>`;
+    }).join('');
 
     wrap.innerHTML = `
       <div class="node" style="--dot:${color}">${s.n}</div>
       <div class="card" data-open="false">
         <button class="card-head" aria-expanded="false">
           <span class="card-title">${s.title}</span>
-          <span class="tag" style="--dot:${color}">${roleName}</span>
+          ${tagsHtml}
           <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         <div class="card-body">
-          <ul class="${listClass}">${listHtml}</ul>
+          ${bodyHtml}
+          ${crmHtml}
           ${noteHtml}
         </div>
       </div>
